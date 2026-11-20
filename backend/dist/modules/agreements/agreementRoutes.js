@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const agreementController_1 = require("./agreementController");
+const auth_1 = require("../../middleware/auth");
+const rateLimit_1 = require("../../middleware/rateLimit");
+const router = (0, express_1.Router)();
+router.post('/analyze', auth_1.authenticateToken, rateLimit_1.checkAIRateLimit, agreementController_1.AgreementIntelligenceController.analyzeAgreement);
+router.post('/create', auth_1.authenticateToken, agreementController_1.AgreementIntelligenceController.createAgreement);
+router.get('/renewal-alerts', auth_1.authenticateToken, agreementController_1.AgreementIntelligenceController.getRenewalAlerts);
+exports.default = router;

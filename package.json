@@ -1,0 +1,13 @@
+{
+  "name": "rentease-root",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "backend:install": "cd backend && npm install",
+    "frontend:install": "cd frontend && npm install",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "backend:dev": "cd backend && npm run dev",
+    "frontend:dev": "cd frontend && npm run dev",
+    "backend:test": "cd backend && npm test"
+  }
+}

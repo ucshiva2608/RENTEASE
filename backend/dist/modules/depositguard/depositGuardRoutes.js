@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const depositGuardController_1 = require("./depositGuardController");
+const auth_1 = require("../../middleware/auth");
+const router = (0, express_1.Router)();
+router.post('/record', auth_1.authenticateToken, depositGuardController_1.DepositGuardController.createDepositRecord);
+router.get('/record/:id', auth_1.authenticateToken, depositGuardController_1.DepositGuardController.getDepositRecord);
+router.post('/inspection', auth_1.authenticateToken, depositGuardController_1.DepositGuardController.addInspectionReport);
+router.post('/deduction', auth_1.authenticateToken, depositGuardController_1.DepositGuardController.addItemizedDeduction);
+router.post('/sign', auth_1.authenticateToken, depositGuardController_1.DepositGuardController.signDepositSettlement);
+router.post('/dispute', auth_1.authenticateToken, depositGuardController_1.DepositGuardController.manageDispute);
+exports.default = router;

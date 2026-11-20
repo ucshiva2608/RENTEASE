@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const trustController_1 = require("./trustController");
+const auth_1 = require("../../middleware/auth");
+const router = (0, express_1.Router)();
+router.get('/badge/:propertyId', trustController_1.TrustVerificationController.getPropertyVerificationBadge);
+router.post('/submit', auth_1.authenticateToken, (0, auth_1.requireRole)(['OWNER', 'ADMIN']), trustController_1.TrustVerificationController.submitVerification);
+router.get('/admin/pending', auth_1.authenticateToken, (0, auth_1.requireRole)(['ADMIN']), trustController_1.TrustVerificationController.getPendingVerifications);
+router.post('/admin/review', auth_1.authenticateToken, (0, auth_1.requireRole)(['ADMIN']), trustController_1.TrustVerificationController.adminReviewVerification);
+exports.default = router;

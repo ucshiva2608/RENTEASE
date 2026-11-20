@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const aiCareController_1 = require("./aiCareController");
+const auth_1 = require("../../middleware/auth");
+const rateLimit_1 = require("../../middleware/rateLimit");
+const router = (0, express_1.Router)();
+router.post('/ticket', auth_1.authenticateToken, rateLimit_1.checkAIRateLimit, aiCareController_1.AICareController.createTicket);
+router.get('/tickets', auth_1.authenticateToken, aiCareController_1.AICareController.getTickets);
+router.post('/quotation', auth_1.authenticateToken, aiCareController_1.AICareController.manageQuotation);
+router.post('/evidence', auth_1.authenticateToken, aiCareController_1.AICareController.recordRepairEvidence);
+exports.default = router;
