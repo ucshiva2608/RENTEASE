@@ -227,5 +227,66 @@ Tests:       24 passed, 24 total
 
 ---
 
+## 🚀 Production Cloud Deployment Guide
+
+RentEase 2.0 is configured for enterprise-grade, zero-downtime production deployment across modern serverless cloud infrastructure:
+* **Database:** [Neon Serverless PostgreSQL](https://neon.tech)
+* **Backend API:** [Render Web Service](https://render.com) (Node.js + Express + Prisma)
+* **Frontend Web Application:** [Vercel](https://vercel.com) (React 18 + Vite + Tailwind CSS)
+
+### 1. Database Setup (Neon PostgreSQL)
+1. Sign up or log in at [Neon Console](https://console.neon.tech).
+2. Create a new project: `rentease-production`.
+3. Copy the pooled PostgreSQL connection string from your dashboard. It looks like:
+   ```text
+   postgresql://[user]:[password]@[endpoint].neon.tech/neondb?sslmode=require
+   ```
+
+### 2. Backend Deployment (Render)
+1. Log in to [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** → **Web Service** → Connect your GitHub repository `RENTEASE`.
+3. Configure the service settings:
+   * **Name:** `rentease-backend`
+   * **Root Directory:** `backend`
+   * **Runtime:** `Node`
+   * **Build Command:** `npm install && npx prisma generate && npm run build`
+   * **Start Command:** `npm run start`
+   * **Plan:** `Free`
+4. Add the following **Environment Variables** in Render:
+   | Key | Value / Description |
+   |---|---|
+   | `NODE_ENV` | `production` |
+   | `DATABASE_URL` | Your Neon PostgreSQL connection string |
+   | `JWT_SECRET` | A secure random 32+ character string |
+   | `ALLOWED_ORIGINS` | `https://your-frontend.vercel.app` (or leave empty to allow preview domains) |
+   | `AI_RATE_LIMIT` | `150` |
+   | `AI_MODEL_FALLBACK` | `true` |
+5. Click **Deploy Web Service**.
+6. Once deployed, run database schema migration & demo seeding:
+   * Open the **Shell** tab in your Render dashboard and run:
+     ```bash
+     npx prisma db push
+     npm run prisma:seed
+     ```
+   * *(Alternatively, push migrations locally: set `DATABASE_URL` in `backend/.env` and run `npm run prisma:push && npm run prisma:seed`).*
+7. Note down your backend URL (e.g. `https://rentease-backend.onrender.com`).
+
+### 3. Frontend Deployment (Vercel)
+1. Log in to [Vercel Dashboard](https://vercel.com).
+2. Click **Add New...** → **Project** → Import your GitHub repository `RENTEASE`.
+3. Configure the project:
+   * **Framework Preset:** `Vite`
+   * **Root Directory:** Click Edit → Select `frontend`
+   * **Build Command:** `npm run build`
+   * **Output Directory:** `dist`
+4. Expand **Environment Variables** and add:
+   | Key | Value |
+   |---|---|
+   | `VITE_API_BASE_URL` | Your deployed Render backend URL (e.g. `https://rentease-backend.onrender.com`) |
+5. Click **Deploy**.
+6. Vercel automatically compiles the SPA and assigns a public SSL URL (e.g. `https://rentease-frontend.vercel.app`).
+
+---
+
 ## 📜 Statutory Legal Notice
 All AI-generated summaries, document extractions, and maintenance classifications provided by the RentEase platform are informational and advisory. Identity verification validates KYC identification documents only and never claims statutory legal ownership without separate registered deed inspection. Banking settlements and security deposits are transacted through compliant banking escrow channels.

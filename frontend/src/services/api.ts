@@ -1,4 +1,9 @@
-const API_BASE = '/api';
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const API_BASE = rawBaseUrl
+  ? rawBaseUrl.endsWith('/api')
+    ? rawBaseUrl
+    : `${rawBaseUrl.replace(/\/+$/, '')}/api`
+  : '/api';
 
 function getHeaders(): HeadersInit {
   const token = localStorage.getItem('rentease_token');

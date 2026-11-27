@@ -1,5 +1,5 @@
-import React from 'react';
-import { Home, Shield, Sparkles, Wrench, FileText, Bot, Mic, ShieldCheck, UserCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { Home, Shield, Sparkles, Wrench, FileText, Bot, Mic, ShieldCheck, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage, Language } from '../context/LanguageContext';
 
@@ -18,13 +18,19 @@ export const Navbar: React.FC<Props> = ({
 }) => {
   const { user, quickSwitchRole } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleNavClick = (view: string) => {
+    onNavigate(view);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <div
-          onClick={() => onNavigate('HOME')}
+          onClick={() => handleNavClick('HOME')}
           className="flex items-center space-x-2.5 cursor-pointer group"
         >
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-105 transition">
@@ -43,10 +49,10 @@ export const Navbar: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Center Module Navigation */}
+        {/* Center Module Navigation (Desktop) */}
         <nav className="hidden md:flex items-center space-x-1 text-xs font-semibold text-slate-600">
           <button
-            onClick={() => onNavigate('PROPERTIES')}
+            onClick={() => handleNavClick('PROPERTIES')}
             className={`px-3 py-2 rounded-xl transition flex items-center gap-1.5 ${
               currentView === 'PROPERTIES' ? 'bg-blue-50 text-blue-700 font-bold' : 'hover:bg-slate-100'
             }`}
@@ -56,7 +62,7 @@ export const Navbar: React.FC<Props> = ({
           </button>
 
           <button
-            onClick={() => onNavigate('DEPOSITGUARD')}
+            onClick={() => handleNavClick('DEPOSITGUARD')}
             className={`px-3 py-2 rounded-xl transition flex items-center gap-1.5 ${
               currentView === 'DEPOSITGUARD' ? 'bg-blue-50 text-blue-700 font-bold' : 'hover:bg-slate-100'
             }`}
@@ -66,7 +72,7 @@ export const Navbar: React.FC<Props> = ({
           </button>
 
           <button
-            onClick={() => onNavigate('MAINTENANCE')}
+            onClick={() => handleNavClick('MAINTENANCE')}
             className={`px-3 py-2 rounded-xl transition flex items-center gap-1.5 ${
               currentView === 'MAINTENANCE' ? 'bg-blue-50 text-blue-700 font-bold' : 'hover:bg-slate-100'
             }`}
@@ -76,7 +82,7 @@ export const Navbar: React.FC<Props> = ({
           </button>
 
           <button
-            onClick={() => onNavigate('AGREEMENTS')}
+            onClick={() => handleNavClick('AGREEMENTS')}
             className={`px-3 py-2 rounded-xl transition flex items-center gap-1.5 ${
               currentView === 'AGREEMENTS' ? 'bg-blue-50 text-blue-700 font-bold' : 'hover:bg-slate-100'
             }`}
@@ -86,7 +92,7 @@ export const Navbar: React.FC<Props> = ({
           </button>
 
           <button
-            onClick={() => onNavigate('ADMIN')}
+            onClick={() => handleNavClick('ADMIN')}
             className={`px-3 py-2 rounded-xl transition flex items-center gap-1.5 ${
               currentView === 'ADMIN' ? 'bg-blue-50 text-blue-700 font-bold' : 'hover:bg-slate-100'
             }`}
@@ -96,7 +102,7 @@ export const Navbar: React.FC<Props> = ({
           </button>
         </nav>
 
-        {/* Right Action Tools: Voice + Copilot + Language + Role Switcher */}
+        {/* Right Action Tools: Voice + Copilot + Language + Role Switcher + Mobile Toggle */}
         <div className="flex items-center space-x-2">
           {/* Voice Assistant Shortcut */}
           <button
@@ -129,7 +135,7 @@ export const Navbar: React.FC<Props> = ({
             <option value="hi">हिन्दी</option>
           </select>
 
-          {/* Role Quick Switcher */}
+          {/* Role Quick Switcher (Desktop) */}
           <div className="border-l border-slate-200 pl-2 hidden lg:flex items-center space-x-1">
             <span className="text-[10px] uppercase font-bold text-slate-400 mr-1">Role:</span>
             {(['OWNER', 'TENANT', 'ADMIN'] as const).map((r) => (
@@ -146,8 +152,97 @@ export const Navbar: React.FC<Props> = ({
               </button>
             ))}
           </div>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5 text-slate-800" /> : <Menu className="w-5 h-5 text-slate-800" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer Navigation (Phones & Tablets) */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-2 shadow-lg animate-fadeIn">
+          <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
+            <button
+              onClick={() => handleNavClick('PROPERTIES')}
+              className={`p-2.5 rounded-xl transition flex items-center gap-2 border ${
+                currentView === 'PROPERTIES' ? 'bg-blue-50 border-blue-200 text-blue-700 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+              }`}
+            >
+              <Sparkles className="w-4 h-4 text-blue-600" />
+              <span>AI Match</span>
+            </button>
+
+            <button
+              onClick={() => handleNavClick('DEPOSITGUARD')}
+              className={`p-2.5 rounded-xl transition flex items-center gap-2 border ${
+                currentView === 'DEPOSITGUARD' ? 'bg-blue-50 border-blue-200 text-blue-700 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+              }`}
+            >
+              <Shield className="w-4 h-4 text-indigo-600" />
+              <span>DepositGuard</span>
+            </button>
+
+            <button
+              onClick={() => handleNavClick('MAINTENANCE')}
+              className={`p-2.5 rounded-xl transition flex items-center gap-2 border ${
+                currentView === 'MAINTENANCE' ? 'bg-blue-50 border-blue-200 text-blue-700 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+              }`}
+            >
+              <Wrench className="w-4 h-4 text-amber-600" />
+              <span>AI Care</span>
+            </button>
+
+            <button
+              onClick={() => handleNavClick('AGREEMENTS')}
+              className={`p-2.5 rounded-xl transition flex items-center gap-2 border ${
+                currentView === 'AGREEMENTS' ? 'bg-blue-50 border-blue-200 text-blue-700 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+              }`}
+            >
+              <FileText className="w-4 h-4 text-purple-600" />
+              <span>Agreements</span>
+            </button>
+          </div>
+
+          <button
+            onClick={() => handleNavClick('ADMIN')}
+            className={`w-full p-2.5 rounded-xl transition flex items-center justify-center gap-2 border text-xs font-semibold ${
+              currentView === 'ADMIN' ? 'bg-blue-50 border-blue-200 text-blue-700 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>Trust & Verification Portal</span>
+          </button>
+
+          {/* Role Switcher in Mobile Drawer */}
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span className="text-[11px] font-bold uppercase text-slate-400">Switch Role:</span>
+            <div className="flex space-x-1">
+              {(['OWNER', 'TENANT', 'ADMIN'] as const).map((r) => (
+                <button
+                  key={r}
+                  onClick={() => {
+                    quickSwitchRole(r);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`text-[10px] font-bold px-2.5 py-1 rounded-md transition ${
+                    user?.role === r
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
